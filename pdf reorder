@@ -1,0 +1,74 @@
+# longitudal & long flip
+from PyPDF2 import PdfReader, PdfWriter
+
+path = 'markov.pdf'
+output_file = 'markreordered.pdf'
+
+def reodering(path):
+    # Creating object of Read and Write functions of the Library.
+    pdf_writer = PdfWriter()
+    pdf_reader = PdfReader(open(path,'rb'))
+
+    # get total no.of pages ie length of PDF
+    total_pages = len(pdf_reader.pages)
+
+    adjusted_total = (total_pages//8+1)*8
+
+    # creates a list of of total pages in ascending order
+    ordered_pages = [i + 1 for i in range(adjusted_total)]
+
+    # '12345678' to '12356784'
+    for i in range(total_pages//8+1):
+            page_no = i*8+4
+
+            expected_location = i*8+8
+
+            ordered_pages.remove(page_no)
+
+            ordered_pages.insert(expected_location - 1, page_no)
+    
+    # '12356784' to '12385674'
+    for i in range(total_pages//8+1):
+            page_no = i*8+8
+
+            expected_location = i*8+4
+
+            ordered_pages.remove(page_no)
+
+            ordered_pages.insert(expected_location - 1, page_no) 
+
+    # '12385674' to '13856274'
+    for i in range(total_pages//8+1):
+            page_no = i*8+2
+
+            expected_location = i*8+6
+
+            ordered_pages.remove(page_no)
+
+            ordered_pages.insert(expected_location - 1, page_no)  
+
+    # '13856274' to '16385274'
+    for i in range(total_pages//8+1):
+            page_no = i*8+6
+
+            expected_location = i*8+2
+
+            ordered_pages.remove(page_no)
+
+            ordered_pages.insert(expected_location - 1, page_no) 
+    
+    for page in ordered_pages:
+        # adding pages in write function page by page
+        if page - 1 < total_pages:
+            pdf_writer.add_page(pdf_reader.pages[page - 1])
+        elif total_pages%8 == 0:
+            pass
+        else:
+            pdf_writer.add_blank_page()
+
+    # Saving the PDF with the specified name         
+    with open(output_file, 'wb') as fh:
+        pdf_writer.write(fh)
+
+if __name__ == '__main__':
+    reodering(path)
